@@ -63,7 +63,10 @@ Common Gradle tasks:
 - Build: `./gradlew assembleDebug`
 - Unit Tests: `./gradlew test`
 - Lint: `./gradlew lint`
+- Static Analysis: `./gradlew detekt`
+- Format Check: `./gradlew ktlintCheck`
 - Format: `./gradlew ktlintFormat`
+- All Quality Checks: `./gradlew runQualityChecks`
 - Update Docs TOC: `./gradlew generateDocsToc`
 
 ### Gradle Modules
