@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "267937925978",
+    "project_id": "phan-mem-tro",
+    "storage_bucket": "phan-mem-tro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267937925978:android:b9cfd9445d35601b730163",
+        "android_client_info": {
+          "package_name": "com.trongqui.chat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEz5ma_UPEfuHUOISR58cTY3rM7lFd5R0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
