@@ -15,6 +15,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Immutable
 import io.element.android.libraries.core.mimetype.MimeTypes
 
+const val MULTI_MEDIA_MAX_ITEMS = 50
+
 @Immutable
 sealed interface PickerType<Input, Output> {
     fun getContract(): ActivityResultContract<Input, Output>
@@ -52,6 +54,20 @@ sealed interface PickerType<Input, Output> {
 
     data class File(val mimeType: String = MimeTypes.Any) : PickerType<String, Uri?> {
         override fun getContract() = ActivityResultContracts.GetContent()
+        override fun getDefaultRequest(): String {
+            return mimeType
+        }
+    }
+
+    data object ImageAndVideoMultiple : PickerType<PickVisualMediaRequest, List<Uri>> {
+        override fun getContract() = ActivityResultContracts.PickMultipleVisualMedia(maxItems = MULTI_MEDIA_MAX_ITEMS)
+        override fun getDefaultRequest(): PickVisualMediaRequest {
+            return PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
+        }
+    }
+
+    data class FileMultiple(val mimeType: String = MimeTypes.Any) : PickerType<String, List<Uri>> {
+        override fun getContract() = ActivityResultContracts.GetMultipleContents()
         override fun getDefaultRequest(): String {
             return mimeType
         }

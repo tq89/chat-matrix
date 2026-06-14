@@ -19,6 +19,7 @@ import io.element.android.libraries.mediapickers.api.PickerProvider
 class FakePickerProvider : PickerProvider {
     private var mimeType = MimeTypes.Any
     private var result: Uri? = null
+    private var multiResults: List<Uri> = emptyList()
 
     @Composable
     override fun registerGalleryPicker(onResult: (uri: Uri?, mimeType: String?) -> Unit): PickerLauncher<PickVisualMediaRequest, Uri?> {
@@ -45,11 +46,30 @@ class FakePickerProvider : PickerProvider {
         return NoOpPickerLauncher { onResult(result) }
     }
 
+    @Composable
+    override fun registerGalleryMultiplePicker(
+        onResult: (uris: List<Uri>) -> Unit,
+    ): PickerLauncher<PickVisualMediaRequest, List<Uri>> {
+        return NoOpPickerLauncher { onResult(multiResults) }
+    }
+
+    @Composable
+    override fun registerFileMultiplePicker(
+        mimeType: String,
+        onResult: (uris: List<Uri>) -> Unit,
+    ): PickerLauncher<String, List<Uri>> {
+        return NoOpPickerLauncher { onResult(multiResults) }
+    }
+
     fun givenResult(value: Uri?) {
         this.result = value
     }
 
     fun givenMimeType(mimeType: String) {
         this.mimeType = mimeType
+    }
+
+    fun givenMultipleResults(values: List<Uri>) {
+        this.multiResults = values
     }
 }
