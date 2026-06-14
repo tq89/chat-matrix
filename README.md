@@ -1,114 +1,187 @@
-[![Latest build](https://github.com/element-hq/element-x-android/actions/workflows/build.yml/badge.svg?query=branch%3Adevelop)](https://github.com/element-hq/element-x-android/actions/workflows/build.yml?query=branch%3Adevelop)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=element-x-android&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=element-x-android)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=element-x-android&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=element-x-android)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=element-x-android&metric=bugs)](https://sonarcloud.io/summary/new_code?id=element-x-android)
-[![codecov](https://codecov.io/github/element-hq/element-x-android/branch/develop/graph/badge.svg?token=ecwvia7amV)](https://codecov.io/github/element-hq/element-x-android)
-[![Element X Android Matrix room #element-x-android:matrix.org](https://img.shields.io/matrix/element-x-android:matrix.org.svg?label=%23element-x-android:matrix.org&logo=matrix&server_fqdn=matrix.org)](https://matrix.to/#/#element-x-android:matrix.org)
-[![Localazy](https://img.shields.io/endpoint?url=https%3A%2F%2Fconnect.localazy.com%2Fstatus%2Felement%2Fdata%3Fcontent%3Dall%26title%3Dlocalazy%26logo%3Dtrue)](https://localazy.com/p/element)
+# Liên Lạc — Ứng dụng Chat Android
 
-# Element X Android
+**Liên Lạc** là ứng dụng nhắn tin nội bộ dành cho tổ chức, được xây dựng trên nền tảng giao thức [Matrix](https://matrix.org/) mã nguồn mở. Ứng dụng kết nối trực tiếp với máy chủ riêng tại `https://chat.trongqui.info`, đảm bảo toàn bộ dữ liệu tin nhắn được lưu trữ nội bộ, bảo mật và riêng tư.
 
-Element X Android is the next-generation [Matrix](https://matrix.org/) client provided by [Element](https://element.io/).
+---
 
-Compared to the previous-generation [Element Classic](https://github.com/element-hq/element-android), the application is a total rewrite, using the [Matrix Rust SDK](https://github.com/matrix-org/matrix-rust-sdk) underneath and targeting devices running Android 7+. The UI layer is written using [Jetpack Compose](https://developer.android.com/jetpack/compose), and the navigation is managed using [Appyx](https://github.com/bumble-tech/appyx).
+## Mục lục
 
-[<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=io.element.android.x)[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/io.element.android.x)
+- [Giới thiệu](#giới-thiệu)
+- [Tính năng nổi bật](#tính-năng-nổi-bật)
+- [Yêu cầu hệ thống](#yêu-cầu-hệ-thống)
+- [Hướng dẫn build](#hướng-dẫn-build)
+- [Cấu trúc dự án](#cấu-trúc-dự-án)
+- [Cấu hình](#cấu-hình)
+- [Push Notification](#push-notification)
+- [Bản quyền](#bản-quyền)
 
-## Table of contents
+---
 
-<!--- TOC -->
+## Giới thiệu
 
-* [Screenshots](#screenshots)
-* [Translations](#translations)
-* [Rust SDK](#rust-sdk)
-* [Status](#status)
-* [Minimum SDK version](#minimum-sdk-version)
-* [Contributing](#contributing)
-* [Build instructions](#build-instructions)
-* [Support](#support)
-* [Copyright and License](#copyright-and-license)
+Liên Lạc được phát triển dựa trên mã nguồn [Element X Android](https://github.com/element-hq/element-x-android) — thế hệ ứng dụng Matrix client mới nhất, viết lại hoàn toàn bằng Kotlin và Jetpack Compose. Bên dưới sử dụng [Matrix Rust SDK](https://github.com/matrix-org/matrix-rust-sdk) để xử lý giao thức, mang lại hiệu năng cao và độ ổn định vượt trội.
 
-<!--- END -->
+**Package:** `com.trongqui.chat`  
+**Máy chủ mặc định:** `https://chat.trongqui.info`  
+**Android tối thiểu:** 7.0 (API 24)
 
-## Screenshots
+---
 
-Here are some screenshots of the application:
+## Tính năng nổi bật
 
-<!--
-Commands run before taking the screenshots:
-adb shell settings put system time_12_24 24
-adb shell am broadcast -a com.android.systemui.demo -e command enter
-adb shell am broadcast -a com.android.systemui.demo -e command clock -e hhmm 1337
-adb shell am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level 4
-adb shell am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level 4
-adb shell am broadcast -a com.android.systemui.demo -e command notifications -e visible false
-adb shell am broadcast -a com.android.systemui.demo -e command battery -e plugged false -e level 100
+- **Nhắn tin thời gian thực** — Gửi/nhận tin nhắn tức thì qua giao thức Matrix
+- **Mã hóa đầu cuối (E2EE)** — Tin nhắn được mã hóa, chỉ người nhận mới đọc được
+- **Đính kèm đa file** — Chọn tối đa 50 ảnh/video/file cùng lúc và gửi theo hàng đợi tự động
+- **Cuộc gọi thoại & video** — Tích hợp Element Call
+- **Push Notification** — Nhận thông báo qua Firebase Cloud Messaging (FCM)
+- **Chế độ tối/sáng** — Hỗ trợ Dark Mode và Light Mode
+- **Phòng chat nhóm** — Tạo phòng, mời thành viên, phân quyền
+- **Chia sẻ vị trí** — Gửi vị trí thời gian thực
+- **Bình chọn (Poll)** — Tạo khảo sát ngay trong phòng chat
+- **Tin nhắn thoại** — Ghi âm và gửi voice message
 
-And to exit demo mode:
-adb shell am broadcast -a com.android.systemui.demo -e command exit
--->
+---
 
-|<img src="./docs/images-lfs/screen_1_light.png" width="280" />|<img src="./docs/images-lfs/screen_2_light.png" width="280" />|<img src="./docs/images-lfs/screen_3_light.png" width="280" />|<img src="./docs/images-lfs/screen_4_light.png" width="280" />|
-|-|-|-|-|
-|<img src="./docs/images-lfs/screen_1_dark.png" width="280" />|<img src="./docs/images-lfs/screen_2_dark.png" width="280" />|<img src="./docs/images-lfs/screen_3_dark.png" width="280" />|<img src="./docs/images-lfs/screen_4_dark.png" width="280" />|
+## Yêu cầu hệ thống
 
-## Translations
+| Mục | Yêu cầu |
+|-----|---------|
+| Android | 7.0 trở lên (API 24+) |
+| JDK | 21 (Temurin/OpenJDK) |
+| Android Studio | Mới nhất (Ladybug trở lên) |
+| Gradle | 9.5.1 (tự động qua wrapper) |
+| Android SDK | API 36 (compile), API 36 (target) |
 
-Element X Android supports many languages. You can help us to translate the app in your language by joining our [Localazy project](https://localazy.com/p/element). You can also help us to improve the existing translations.
+---
 
-Note that for now, we keep control on the French and German translations.
+## Hướng dẫn build
 
-Translations can be checked screen per screen using our tool Element X Android Gallery, available at https://element-hq.github.io/element-x-android/. Note that this page is updated every Tuesday.
+### 1. Clone dự án
 
-More instructions about translating the application can be found at [CONTRIBUTING.md](CONTRIBUTING.md#strings).
+```bash
+git clone https://github.com/tq89/chat-matrix.git
+cd chat-matrix
+git checkout claude/serene-ride-3saoii
+```
 
-## Rust SDK
+### 2. Mở bằng Android Studio
 
-Element X leverages the [Matrix Rust SDK](https://github.com/matrix-org/matrix-rust-sdk) through an FFI layer that the final client can directly import and use.
+**File → Open** → chọn thư mục `chat-matrix` → chờ Gradle sync hoàn tất.
 
-We're doing this as a way to share code between platforms and while we've seen promising results it's still in the experimental stage and bound to change.
+### 3. Build APK debug
 
-## Status
+```bash
+./gradlew assembleDebug
+```
 
-This project is actively developed and supported. New users are recommended to use Element X instead of the previous-generation app.
+APK output:
+```
+app/build/outputs/apk/gplay/debug/app-gplay-debug.apk
+```
 
-## Minimum SDK version
+### 4. Các lệnh Gradle thường dùng
 
-Element X Android requires a minimum SDK version of 24 (Android 7.0, Nougat). We aim to support devices running Android 7.0 and above, which covers a wide range of devices still in use today.
+```bash
+# Build
+./gradlew assembleDebug          # Build APK debug
+./gradlew assembleRelease        # Build APK release
 
-Element Android Enterprise requires a minimum SDK version of 33 (Android 13, Tiramisu). For Element Enterprise, we support only devices that still receive security updates, which means devices running Android 13 and above. Android does not have a documented support policy, but some information can be found at [https://endoflife.date/android](https://endoflife.date/android).
+# Kiểm tra chất lượng code
+./gradlew runQualityChecks       # Chạy toàn bộ kiểm tra
+./gradlew detekt                 # Phân tích tĩnh
+./gradlew ktlintCheck            # Kiểm tra định dạng code
+./gradlew ktlintFormat           # Tự động định dạng code
+./gradlew lint                   # Android Lint
 
-## Contributing
+# Test
+./gradlew test                   # Chạy unit tests
+```
 
-Want to get actively involved in the project? You're more than welcome! A good way to start is to check the issues that are labelled with the [good first issue](https://github.com/element-hq/element-x-android/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) label. Let us know by commenting the issue that you're starting working on it.
+---
 
-But first make sure to read our [contribution guide](CONTRIBUTING.md) first.
+## Cấu trúc dự án
 
-You can also come chat with the community in the Matrix [room](https://matrix.to/#/#element-x-android:matrix.org) dedicated to the project.
+```
+chat-matrix/
+├── app/                    # Module ứng dụng chính
+│   └── google-services.json  # Cấu hình Firebase
+├── appconfig/              # Cấu hình ứng dụng (server, tên, analytics...)
+├── appicon/                # Icon ứng dụng các kích thước
+├── appnav/                 # Điều hướng màn hình (Appyx)
+├── features/               # Các tính năng (login, messages, roomdetails...)
+│   └── messages/impl/      # Màn hình chat chính
+├── libraries/              # Thư viện dùng chung
+│   ├── compound/           # Hệ thống màu sắc & design tokens
+│   ├── matrix/             # Wrapper Matrix Rust SDK
+│   ├── mediapickers/       # Bộ chọn file/ảnh (hỗ trợ multi-select)
+│   └── pushproviders/      # Tích hợp Firebase & UnifiedPush
+├── services/               # Dịch vụ nền (analytics, notifications...)
+└── plugins/                # Gradle plugins & cấu hình build
+```
 
-## Build instructions
+---
 
-Just clone the project and open it in Android Studio. Make sure to select the
-`app` configuration when building (as we also have sample apps in the project).
+## Cấu hình
 
-To build against a local copy of the Rust SDK, see the [Developer
-onboarding](docs/_developer_onboarding.md#building-the-sdk-locally) instructions.
+Các thông số chính của ứng dụng nằm tại:
 
-## Support
+### `plugins/src/main/kotlin/config/BuildTimeConfig.kt`
+```kotlin
+APPLICATION_ID   = "com.trongqui.chat"
+APPLICATION_NAME = "Liên lạc"
+```
 
-When you are experiencing an issue on Element X Android, please first search in [GitHub issues](https://github.com/element-hq/element-x-android/issues)
-and then in [#element-x-android:matrix.org](https://matrix.to/#/#element-x-android:matrix.org).
-If after your research you still have a question, ask at [#element-x-android:matrix.org](https://matrix.to/#/#element-x-android:matrix.org). Otherwise feel free to create a GitHub issue if you encounter a bug or a crash, by explaining clearly in detail what happened. You can also perform bug reporting from the application settings. This is especially recommended when you encounter a crash.
+### `appconfig/src/main/kotlin/.../AuthenticationConfig.kt`
+```kotlin
+MATRIX_ORG_URL = "https://chat.trongqui.info"  // Homeserver mặc định
+```
 
-## Copyright and License
+### `appconfig/src/main/kotlin/.../ApplicationConfig.kt`
+```kotlin
+PRODUCTION_APPLICATION_NAME = "Liên lạc"
+```
 
-Copyright (c) 2025 Element Creations Ltd.
+---
+
+## Push Notification
+
+Ứng dụng sử dụng **Firebase Cloud Messaging (FCM)** để gửi thông báo đẩy.
+
+**Cấu hình Firebase:**
+- Project: `phan-mem-tro` (ID: `267937925978`)
+- File config: `app/google-services.json`
+- Package đã đăng ký: `com.trongqui.chat`
+
+**Để Push Notification hoạt động đầy đủ**, máy chủ Matrix (`chat.trongqui.info`) cần cài đặt **Sygnal** (push gateway) và kết nối với FCM Server Key lấy từ Firebase Console.
+
+Ứng dụng cũng hỗ trợ **UnifiedPush** cho bản F-Droid (không cần Google Services).
+
+---
+
+## Kiến trúc kỹ thuật
+
+| Thành phần | Công nghệ |
+|-----------|-----------|
+| Ngôn ngữ | Kotlin 2.4 |
+| UI | Jetpack Compose + Material 3 |
+| Điều hướng | Appyx 1.7 |
+| Giao thức Matrix | Matrix Rust SDK 26.06 |
+| Dependency Injection | Metro 1.1 |
+| State management | Molecule (Presenter pattern) |
+| Push | Firebase FCM + UnifiedPush |
+| Database | SQLDelight + Room |
+
+---
+
+## Bản quyền
+
+Dự án này được phát triển dựa trên mã nguồn [Element X Android](https://github.com/element-hq/element-x-android).
+
+Copyright (c) 2025 Element Creations Ltd.  
 Copyright (c) 2022 - 2025 New Vector Ltd.
 
-This software is dual licensed by Element Creations Ltd (Element). It can be used either:
+Phần mềm gốc được cấp phép kép:
+- **Miễn phí** theo GNU Affero General Public License v3 (AGPL-3.0)
+- **Thương mại** theo Element Commercial License
 
-(1) for free under the terms of the GNU Affero General Public License (as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version); OR
-
-(2) under the terms of a paid-for Element Commercial License agreement between you and Element (the terms of which may vary depending on what you and Element have agreed to).
-
-Unless required by applicable law or agreed to in writing, software distributed under the Licenses is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licenses for the specific language governing permissions and limitations under the Licenses.
+Xem chi tiết tại file [LICENSE](LICENSE).
