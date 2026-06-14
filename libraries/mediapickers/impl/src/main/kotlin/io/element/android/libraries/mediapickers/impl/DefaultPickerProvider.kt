@@ -138,6 +138,43 @@ class DefaultPickerProvider(
         }
     }
 
+    /**
+     * Remembers and returns a [PickerLauncher] for selecting multiple gallery items (images and videos).
+     * Supports up to [MULTI_MEDIA_MAX_ITEMS] files at once.
+     * [onResult] will be called with the list of selected [Uri]s (empty if nothing was selected).
+     */
+    @Composable
+    override fun registerGalleryMultiplePicker(
+        onResult: (uris: List<Uri>) -> Unit,
+    ): PickerLauncher<PickVisualMediaRequest, List<Uri>> {
+        return if (LocalInspectionMode.current) {
+            NoOpPickerLauncher { onResult(emptyList()) }
+        } else {
+            rememberPickerLauncher(type = PickerType.ImageAndVideoMultiple) { uris ->
+                onResult(uris)
+            }
+        }
+    }
+
+    /**
+     * Remembers and returns a [PickerLauncher] for selecting multiple files of a certain [mimeType].
+     * Supports up to [MULTI_MEDIA_MAX_ITEMS] files at once.
+     * [onResult] will be called with the list of selected [Uri]s (empty if nothing was selected).
+     */
+    @Composable
+    override fun registerFileMultiplePicker(
+        mimeType: String,
+        onResult: (uris: List<Uri>) -> Unit,
+    ): PickerLauncher<String, List<Uri>> {
+        return if (LocalInspectionMode.current) {
+            NoOpPickerLauncher { onResult(emptyList()) }
+        } else {
+            rememberPickerLauncher(type = PickerType.FileMultiple(mimeType)) { uris ->
+                onResult(uris)
+            }
+        }
+    }
+
     private fun getTemporaryFile(
         filename: String,
     ): File {
